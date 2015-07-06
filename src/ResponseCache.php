@@ -70,10 +70,15 @@ final class ResponseCache
      */
     private function generateKey(ServerRequestInterface $request)
     {
+        $params = $request->getQueryParams();
+        ksort($params);
+
         $parts = [
             $request->getMethod(),
-            $request->getUri()->getPath()
+            $request->getUri()->getPath(),
+            serialize($params)
         ];
-        return implode(':', $parts);
+
+        return sha1(implode(':', $parts));
     }
 }
