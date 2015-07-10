@@ -48,7 +48,13 @@ final class ResponseCache
             return $response;
         }
 
+        // prepare headers
+        $ttl  = $this->config['ttl'];
+
         $response = $next ? $next($request, $response) : $response;
+        $response = $response
+            ->withHeader('Cache-Control', sprintf('public,max-age=%d,s-maxage=%d', $ttl, $ttl))
+            ->withHeader('ETag', $key);
 
         // save cache - status code, headers, body
         $body    = $response->getBody()->__toString();
